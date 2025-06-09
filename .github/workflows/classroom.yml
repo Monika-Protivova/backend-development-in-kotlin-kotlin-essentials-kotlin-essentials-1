@@ -1,0 +1,60 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: 'Lesson 1: Main'
+      id: lesson-1-main
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Lesson 1: Main'
+        setup-command: ''
+        command: "./gradlew testLesson01"
+        timeout: 10
+        max-score: 20
+    - name: 'Lesson 2: Kotlin Essentials'
+      id: lesson-2-kotlin-essentials
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Lesson 2: Kotlin Essentials'
+        setup-command: ''
+        command: "./gradlew testLesson02"
+        timeout: 10
+        max-score: 20
+    - name: 'Lesson 3: Object-Oriented Programming Principles'
+      id: lesson-3-object-oriented-programming-principles
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Lesson 3: Object-Oriented Programming Principles'
+        setup-command: ''
+        command: "./gradlew testLesson03"
+        timeout: 10
+        max-score: 20
+    - name: 'Lesson 4: Testing'
+      id: lesson-4-testing
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Lesson 4: Testing'
+        setup-command: ''
+        command: "./gradlew testLesson04"
+        timeout: 10
+        max-score: 20
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        LESSON-1-MAIN_RESULTS: "${{steps.lesson-1-main.outputs.result}}"
+        LESSON-2-KOTLIN-ESSENTIALS_RESULTS: "${{steps.lesson-2-kotlin-essentials.outputs.result}}"
+        LESSON-3-OBJECT-ORIENTED-PROGRAMMING-PRINCIPLES_RESULTS: "${{steps.lesson-3-object-oriented-programming-principles.outputs.result}}"
+        LESSON-4-TESTING_RESULTS: "${{steps.lesson-4-testing.outputs.result}}"
+      with:
+        runners: lesson-1-main,lesson-2-kotlin-essentials,lesson-3-object-oriented-programming-principles,lesson-4-testing
